@@ -41,6 +41,11 @@ public class BurgerServiceImpl implements BurgerService {
     }
 
     @Override
+    public Optional<Burger> getBurger(String name) {
+        return this.burgerRepository.getBurgerByName(name);
+    }
+
+    @Override
     public List<Burger> getBurgers() {
         return this.burgerRepository.findAll();
     }

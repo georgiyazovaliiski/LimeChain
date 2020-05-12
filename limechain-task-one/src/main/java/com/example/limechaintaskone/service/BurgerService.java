@@ -9,6 +9,6 @@ public interface BurgerService {
     Optional<Burger> addBurger(String name);
     Optional<Burger> getBurger(Integer id);
     Optional<Burger> getRandom();
-
+    Optional<Burger> getBurger(String name);
     List<Burger> getBurgers();
 }
