@@ -50,15 +50,16 @@ public class BurgerController {
 
     }
 
-    @RequestMapping(path = "/{name}", method = RequestMethod.GET)
-    public ResponseEntity getOneBurger(@PathVariable String name){
-        Optional<Burger> burger = this.burgerService.getBurger(name);
-
-        if(burger.isPresent()){
-            return new ResponseEntity<>(burger.get(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>("Could not find a burger with a name of " + name, HttpStatus.BAD_REQUEST);
-    }
+//    TODO: Potentially Change Logic Around this after call
+//    @RequestMapping(path = "/{name}", method = RequestMethod.GET)
+//    public ResponseEntity getOneBurger(@PathVariable String name){
+//        Optional<Burger> burger = this.burgerService.getBurger(name);
+//
+//        if(burger.isPresent()){
+//            return new ResponseEntity<>(burger.get(), HttpStatus.OK);
+//        }
+//        return new ResponseEntity<>("Could not find a burger with a name of " + name, HttpStatus.BAD_REQUEST);
+//    }
 
     @RequestMapping(path = "/random", method = RequestMethod.GET)
     public ResponseEntity getRandomBurger(){
