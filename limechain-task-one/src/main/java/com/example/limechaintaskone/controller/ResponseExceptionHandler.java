@@ -10,13 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @ControllerAdvice
-public class RestEntityResponseExceptionHandler extends ResponseEntityExceptionHandler {
+public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler
-    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     @ResponseBody
     public ResponseEntity handleAuthenticationException(Exception ex) {
-        System.out.println("tuk li vlqzohme?");
-        return new ResponseEntity("Too many requests",HttpStatus.TOO_MANY_REQUESTS);
+        return new ResponseEntity("You ran into some trouble. Try again later.\n" + ex,HttpStatus.BAD_REQUEST);
     }
 }

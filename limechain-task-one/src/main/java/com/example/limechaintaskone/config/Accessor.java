@@ -3,7 +3,7 @@ package com.example.limechaintaskone.config;
 import java.time.LocalDateTime;
 
 public class Accessor {
-    public static final Long RATELIMIT = 5l;
+    public static final Long RATELIMIT = 3600l;
     private String IP;
     private LocalDateTime localDateTime;
     private LocalDateTime lockOutDate;
@@ -23,8 +23,6 @@ public class Accessor {
     }
 
     public boolean lockOutPeriodOver(){
-        System.out.println("Lockout Date Until: " + this.lockOutDate);
-        System.out.println("Date Time now: " + LocalDateTime.now());
         if(this.lockOutDate.compareTo(LocalDateTime.now()) <= 0) return true;
 
         this.lockOutDate = LocalDateTime.now().plusSeconds(15);

@@ -1,28 +1,37 @@
 package com.example.limechaintaskone.controller;
 
+import com.example.limechaintaskone.dto.BurgerDTO;
 import com.example.limechaintaskone.model.Burger;
 import com.example.limechaintaskone.service.BurgerService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/burgers")
 public class BurgerController {
+    private ModelMapper modelMapper;
     private BurgerService burgerService;
 
     @Autowired
-    public BurgerController(BurgerService burgerService) {
+    public BurgerController(ModelMapper modelMapper, BurgerService burgerService) {
+        this.modelMapper = modelMapper;
         this.burgerService = burgerService;
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity addBurger(@RequestParam String name){
-        Optional<Burger> burger = this.burgerService.addBurger(name);
+    public ResponseEntity addBurger(@RequestParam String name, @RequestParam(required = false, defaultValue = "") String imageUrl, @RequestParam(required = false, defaultValue = "") String ingredients){
+        Optional<BurgerDTO> burger = this.burgerService.addBurger(name, imageUrl, ingredients.split("[, ]+"));
 
         if(burger.isPresent()){
             return new ResponseEntity<>("Successfully created a burger with a name " + name, HttpStatus.OK);
@@ -31,42 +40,49 @@ public class BurgerController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity getAllBurgers(){
-        List<Burger> burgers = this.burgerService.getBurgers();
+    public ResponseEntity getAllBurgers(@RequestParam(required = false) String name,
+                                        @RequestParam(required = false, defaultValue = "0") int page,
+                                        @RequestParam(required = false, defaultValue = "25") int size,
+                                        @RequestParam(required = false, defaultValue = "id") String sort,
+                                        Pageable pageable,
+                                        PagedResourcesAssembler assembler)
+    {
+        if(name!=null && !name.equals("")) return getOneBurger(name);
+
+        List<BurgerDTO> burgers = this.burgerService.getBurgers(page,size,sort);
+
         if(burgers.size() < 1){
             return new ResponseEntity<>("Could not find any burgers.",HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(this.burgerService.getBurgers(), HttpStatus.OK);
+        return new ResponseEntity<>(burgers, HttpStatus.OK);
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public ResponseEntity getOneBurger(@PathVariable int id){
-        Optional<Burger> burger = this.burgerService.getBurger(id);
+        Optional<BurgerDTO> burger = this.burgerService.getBurger(id);
 
         if(burger.isPresent()){
-            return new ResponseEntity<>(burger.get(), HttpStatus.OK);
+            return new ResponseEntity<>(modelMapper.map(burger.get(),BurgerDTO.class), HttpStatus.OK);
         }
         return new ResponseEntity<>("Could not find a burger with an id of " + id, HttpStatus.BAD_REQUEST);
 
     }
 
-//    TODO: Potentially Change Logic Around this after call
-//    @RequestMapping(path = "/{name}", method = RequestMethod.GET)
-//    public ResponseEntity getOneBurger(@PathVariable String name){
-//        Optional<Burger> burger = this.burgerService.getBurger(name);
-//
-//        if(burger.isPresent()){
-//            return new ResponseEntity<>(burger.get(), HttpStatus.OK);
-//        }
-//        return new ResponseEntity<>("Could not find a burger with a name of " + name, HttpStatus.BAD_REQUEST);
-//    }
+    public ResponseEntity getOneBurger(String name){
+        Optional<BurgerDTO> burger = this.burgerService.getBurger(name);
+
+        if(burger.isPresent()){
+            return new ResponseEntity<>(modelMapper.map(burger.get(),BurgerDTO.class), HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Could not find a burger with a name of " + name, HttpStatus.BAD_REQUEST);
+    }
 
     @RequestMapping(path = "/random", method = RequestMethod.GET)
     public ResponseEntity getRandomBurger(){
-        Optional<Burger> burger = this.burgerService.getRandom();
+        Optional<BurgerDTO> burger = this.burgerService.getRandom();
 
         if(burger.isPresent()){
-            return new ResponseEntity<>(burger.get(), HttpStatus.OK);
+            return new ResponseEntity<>(modelMapper.map(burger.get(),BurgerDTO.class), HttpStatus.OK);
         }
         return new ResponseEntity<>("Could not get a random burger. Try again later.", HttpStatus.BAD_REQUEST);
     }
