@@ -3,17 +3,17 @@ package com.example.limechaintaskone.config;
 import java.time.LocalDateTime;
 
 public class Accessor {
-    public static final Long RATELIMIT = 3600l;
+    public static final Long RATELIMIT = 5l;
     private String IP;
-    private LocalDateTime localDateTime;
+    private LocalDateTime firstRequestTime;
     private LocalDateTime lockOutDate;
     private Long requestsLeft;
     private int lockOutTime;
 
-    public Accessor(String IP, LocalDateTime localDateTime) {
+    public Accessor(String IP, LocalDateTime firstRequestTime) {
         this.IP = IP;
-        this.localDateTime = localDateTime;
-        this.lockOutDate = this.localDateTime.minusMinutes(1);
+        this.firstRequestTime = firstRequestTime;
+        this.lockOutDate = this.firstRequestTime.minusMinutes(1);
         this.requestsLeft = RATELIMIT;
         this.lockOutTime = 15;
     }
@@ -23,9 +23,14 @@ public class Accessor {
     }
 
     public boolean lockOutPeriodOver(){
-        if(this.lockOutDate.compareTo(LocalDateTime.now()) <= 0) return true;
+        if(this.lockOutDate.compareTo(LocalDateTime.now()) <= 0 && this.requestsLeft == RATELIMIT){
+            this.firstRequestTime = LocalDateTime.now();
+            return true;
+        }else if(this.lockOutDate.compareTo(LocalDateTime.now()) <= 0){
+            return true;
+        }
 
-        this.lockOutDate = LocalDateTime.now().plusSeconds(15);
+        this.lockOutDate = LocalDateTime.now().plusMinutes(this.lockOutTime);
         this.requestsLeft = RATELIMIT;
 
         return false;
@@ -35,8 +40,8 @@ public class Accessor {
         return IP;
     }
 
-    public LocalDateTime getLocalDateTime() {
-        return localDateTime;
+    public LocalDateTime getFirstRequestTime() {
+        return firstRequestTime;
     }
 
     @Override
@@ -59,8 +64,11 @@ public class Accessor {
 
     public void persistRequest() {
         this.requestsLeft--;
-        if(this.requestsLeft<=0){
-            this.lockOutDate = LocalDateTime.now().plusSeconds(15);
+
+        if(this.requestsLeft<=0 && LocalDateTime.now().minusMinutes(60).compareTo(this.firstRequestTime)<=0){
+            this.lockOutDate = LocalDateTime.now().plusSeconds(this.lockOutTime);
+        }else if(LocalDateTime.now().minusMinutes(60).compareTo(this.firstRequestTime)>0){
+            this.requestsLeft = RATELIMIT;
         }
     }
 
