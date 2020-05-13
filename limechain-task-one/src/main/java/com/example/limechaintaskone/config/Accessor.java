@@ -3,7 +3,7 @@ package com.example.limechaintaskone.config;
 import java.time.LocalDateTime;
 
 public class Accessor {
-    public static final Long RATELIMIT = 5l;
+    public static final Long RATELIMIT = 3600l;
     private String IP;
     private LocalDateTime firstRequestTime;
     private LocalDateTime lockOutDate;
