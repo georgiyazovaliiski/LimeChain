@@ -29,7 +29,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .addFilter(new IPAuthenticationFilter(authenticationManager()))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .csrf().disable();
+                .csrf()
+                .disable();
     }
 
     @Bean

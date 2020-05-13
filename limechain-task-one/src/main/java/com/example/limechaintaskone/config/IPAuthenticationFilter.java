@@ -46,5 +46,6 @@ public class IPAuthenticationFilter extends BasicAuthenticationFilter {
 
         res.setStatus(429);
         res.setHeader("x-ratelimit-remaining",Long.toString(0l));
+        res.sendRedirect("error/");
     }
 }
