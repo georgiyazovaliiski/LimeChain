@@ -8,12 +8,14 @@ public class Accessor {
     private LocalDateTime localDateTime;
     private LocalDateTime lockOutDate;
     private Long requestsLeft;
+    private int lockOutTime;
 
     public Accessor(String IP, LocalDateTime localDateTime) {
         this.IP = IP;
         this.localDateTime = localDateTime;
         this.lockOutDate = this.localDateTime.minusMinutes(1);
         this.requestsLeft = RATELIMIT;
+        this.lockOutTime = 15;
     }
 
     public Accessor(String IP) {
@@ -66,5 +68,9 @@ public class Accessor {
 
     public long getRequestsLeft() {
         return this.requestsLeft;
+    }
+
+    public int getLockOutTime() {
+        return this.lockOutTime;
     }
 }

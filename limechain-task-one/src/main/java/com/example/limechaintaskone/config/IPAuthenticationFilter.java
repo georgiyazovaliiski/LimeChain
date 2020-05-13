@@ -42,10 +42,11 @@ public class IPAuthenticationFilter extends BasicAuthenticationFilter {
             accessed.persistRequest();
             res.setHeader("x-ratelimit-remaining",Long.toString(accessed.getRequestsLeft()));
             chain.doFilter(req, res);
+        }else {
+            res.setStatus(429);
+            res.setHeader("x-ratelimit-remaining", Long.toString(0l));
+            res.setHeader("Location", "/error");
+            res.sendError(429, "Too many requests, try again after " + accessed.getLockOutTime());
         }
-
-        res.setStatus(429);
-        res.setHeader("x-ratelimit-remaining",Long.toString(0l));
-        res.sendRedirect("error/");
     }
 }
