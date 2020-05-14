@@ -3,6 +3,7 @@ package com.example.limechaintaskone.controller;
 import com.example.limechaintaskone.dto.BurgerDTO;
 import com.example.limechaintaskone.model.Burger;
 import com.example.limechaintaskone.service.BurgerService;
+import org.hibernate.annotations.Type;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -52,19 +53,19 @@ public class BurgerController {
         List<BurgerDTO> burgers = this.burgerService.getBurgers(page,size,sort);
 
         if(burgers.size() < 1){
-            return new ResponseEntity<>("Could not find any burgers.",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Could not find any burgers.",HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(burgers, HttpStatus.OK);
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity getOneBurger(@PathVariable int id){
+    public ResponseEntity getOneBurger(@PathVariable("id") int id){
         Optional<BurgerDTO> burger = this.burgerService.getBurger(id);
 
         if(burger.isPresent()){
             return new ResponseEntity<>(modelMapper.map(burger.get(),BurgerDTO.class), HttpStatus.OK);
         }
-        return new ResponseEntity<>("Could not find a burger with an id of " + id, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Could not find a burger with an id of " + id, HttpStatus.NOT_FOUND);
 
     }
 
@@ -74,7 +75,7 @@ public class BurgerController {
         if(burger.isPresent()){
             return new ResponseEntity<>(modelMapper.map(burger.get(),BurgerDTO.class), HttpStatus.OK);
         }
-        return new ResponseEntity<>("Could not find a burger with a name of " + name, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Could not find a burger with a name of " + name, HttpStatus.NOT_FOUND);
     }
 
     @RequestMapping(path = "/random", method = RequestMethod.GET)
@@ -84,6 +85,6 @@ public class BurgerController {
         if(burger.isPresent()){
             return new ResponseEntity<>(modelMapper.map(burger.get(),BurgerDTO.class), HttpStatus.OK);
         }
-        return new ResponseEntity<>("Could not get a random burger. Try again later.", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Could not get a random burger. Try again later.", HttpStatus.NOT_FOUND);
     }
 }

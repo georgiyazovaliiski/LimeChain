@@ -22,6 +22,7 @@ public class BurgerServiceImpl implements BurgerService, IngredientService {
     private BurgerRepository burgerRepository;
     private IngredientRepository ingredientRepository;
     private ModelMapper mapper;
+
     @Autowired
     public BurgerServiceImpl(BurgerRepository burgerRepository, IngredientRepository ingredientRepository, ModelMapper mapper) {
         this.burgerRepository = burgerRepository;
@@ -44,38 +45,29 @@ public class BurgerServiceImpl implements BurgerService, IngredientService {
             else ingredientList.add(new Ingredient(n));
         });
 
-        Burger burger = new Burger(name, ingredientList, imageUrl);
+        Burger addingBurger = new Burger(name, ingredientList, imageUrl);
 
-        return Optional.ofNullable(this.mapper.map(this.burgerRepository.save(burger), BurgerDTO.class));
+        Optional<Burger> burger = Optional.of(this.burgerRepository.save(addingBurger));
+
+        return burger.map(value -> this.mapper.map(value, BurgerDTO.class));
     }
 
     @Override
     public Optional<BurgerDTO> getBurger(Integer id) {
         Optional<Burger> burger = this.burgerRepository.findById(id);
-
-        return Optional.ofNullable(this.mapper.map(burger.get(),BurgerDTO.class));
+        return burger.map(value -> this.mapper.map(value, BurgerDTO.class));
     }
 
     @Override
     public Optional<BurgerDTO> getRandom() {
-        Burger burger = this.burgerRepository.getRandomBurger();
-        if(burger != null) {
-            return Optional.ofNullable(this.mapper.map(burger,BurgerDTO.class));
-        }
-        else
-            return Optional.empty();
+        Optional<Burger> burger = this.burgerRepository.getRandomBurger();
+        return burger.map(value -> this.mapper.map(value, BurgerDTO.class));
     }
 
     @Override
     public Optional<BurgerDTO> getBurger(String name) {
         Optional<Burger> burger = this.burgerRepository.getBurgerByName(name);
-        if(burger.isPresent())
-        return Optional.of(
-                this.mapper.map(
-                                this.burgerRepository.getBurgerByName(name).get(),
-                                BurgerDTO.class
-                            ));
-        else return Optional.empty();
+        return burger.map(value -> this.mapper.map(value, BurgerDTO.class));
     }
 
     @Override

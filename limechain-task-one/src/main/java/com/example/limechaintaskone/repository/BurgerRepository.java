@@ -13,5 +13,5 @@ public interface BurgerRepository extends PagingAndSortingRepository<Burger,Inte
     Optional<Burger> getBurgerByName(String name);
     @Query(value = "SELECT * FROM burger ORDER BY RAND() LIMIT 1",
             nativeQuery = true)
-    Burger getRandomBurger();
+    Optional<Burger> getRandomBurger();
 }

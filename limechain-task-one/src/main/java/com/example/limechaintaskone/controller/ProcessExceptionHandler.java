@@ -10,11 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @ControllerAdvice
-public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
+public class ProcessExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler
     @ResponseBody
-    public ResponseEntity handleAuthenticationException(Exception ex) {
+    public ResponseEntity handleException(Exception ex) {
         return new ResponseEntity("You ran into some trouble. Try again later.\n" + ex,HttpStatus.BAD_REQUEST);
     }
 }

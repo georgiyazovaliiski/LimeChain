@@ -4,18 +4,17 @@ import java.time.LocalDateTime;
 
 public class Accessor {
     public static final Long RATELIMIT = 3600l;
+    public static final Long LOCKOUTTIME = 15l;
     private String IP;
     private LocalDateTime firstRequestTime;
     private LocalDateTime lockOutDate;
     private Long requestsLeft;
-    private int lockOutTime;
 
     public Accessor(String IP, LocalDateTime firstRequestTime) {
         this.IP = IP;
         this.firstRequestTime = firstRequestTime;
         this.lockOutDate = this.firstRequestTime.minusMinutes(1);
         this.requestsLeft = RATELIMIT;
-        this.lockOutTime = 15;
     }
 
     public Accessor(String IP) {
@@ -30,7 +29,7 @@ public class Accessor {
             return true;
         }
 
-        this.lockOutDate = LocalDateTime.now().plusMinutes(this.lockOutTime);
+        this.lockOutDate = LocalDateTime.now().plusMinutes(this.LOCKOUTTIME);
         this.requestsLeft = RATELIMIT;
 
         return false;
@@ -66,7 +65,7 @@ public class Accessor {
         this.requestsLeft--;
 
         if(this.requestsLeft<=0 && LocalDateTime.now().minusMinutes(60).compareTo(this.firstRequestTime)<=0){
-            this.lockOutDate = LocalDateTime.now().plusSeconds(this.lockOutTime);
+            this.lockOutDate = LocalDateTime.now().plusSeconds(this.LOCKOUTTIME);
         }else if(LocalDateTime.now().minusMinutes(60).compareTo(this.firstRequestTime)>0){
             this.requestsLeft = RATELIMIT;
         }
@@ -74,9 +73,5 @@ public class Accessor {
 
     public long getRequestsLeft() {
         return this.requestsLeft;
-    }
-
-    public int getLockOutTime() {
-        return this.lockOutTime;
     }
 }
