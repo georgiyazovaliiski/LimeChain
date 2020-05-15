@@ -1,12 +1,24 @@
 pragma solidity ^0.4.17;
 
 contract Limechain{
-    address private childOne;
-    address private childTwo;
+    address private creator;
+    address public childOne;
+    address public childTwo;
     uint private etherSpent;
     
     function Limechain(address chiOne, address chiTwo) public{
         childOne = chiOne;
+        childTwo = chiTwo;
+        creator = msg.sender;
+    }
+    
+    function changeChildOne(address chiOne) public{
+        require(msg.sender==creator);
+        childOne = chiOne;
+    }
+    
+    function changeChildTwo(address chiTwo) public{
+        require(msg.sender==creator);
         childTwo = chiTwo;
     }
     
