@@ -4,7 +4,7 @@ contract Limechain{
     address private creator;
     address public childOne;
     address public childTwo;
-    uint private etherSpent;
+    uint public etherSpent;
     
     function Limechain(address chiOne, address chiTwo) public{
         childOne = chiOne;
@@ -20,10 +20,6 @@ contract Limechain{
     function changeChildTwo(address chiTwo) public{
         require(msg.sender==creator);
         childTwo = chiTwo;
-    }
-    
-    function getTotalEtherSpent() public view returns(uint){
-        return etherSpent;
     }
     
     function give() external payable{
